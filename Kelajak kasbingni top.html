@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kelajak kasbingni top</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--text:#1c2033;--muted:#667;--accent:#4f46e5;--accent2:#7c3aed;--line:#e3e5ef;--bar:#e8e9f5;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12131c;--card:#1c1e2c;--text:#eef0fa;--muted:#a3a7c0;--accent:#8b87ff;--accent2:#b18cff;--line:#2d3046;--bar:#2a2d44}}
+:root[data-theme="dark"]{--bg:#12131c;--card:#1c1e2c;--text:#eef0fa;--muted:#a3a7c0;--accent:#8b87ff;--accent2:#b18cff;--line:#2d3046;--bar:#2a2d44}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
+.wrap{max-width:680px;margin:0 auto;padding:24px 16px 48px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;margin-top:16px}
+h1{font-size:2rem;margin:8px 0;line-height:1.2}
+h2{font-size:1.3rem;margin:0 0 16px}
+p{color:var(--muted);margin:8px 0}
+.hero{text-align:center;padding-top:24px}
+.emoji{font-size:3rem}
+button{font:inherit;cursor:pointer;border:0}
+.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:14px 28px;border-radius:12px;font-weight:600;margin-top:16px}
+.opt{display:block;width:100%;text-align:left;background:var(--bg);color:var(--text);border:2px solid var(--line);padding:14px 16px;border-radius:12px;margin-top:10px}
+.opt:hover{border-color:var(--accent)}
+.prog{height:8px;background:var(--bar);border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+.small{font-size:.85rem;color:var(--muted);margin-bottom:8px}
+.row{margin:12px 0}
+.row b{display:flex;justify-content:space-between;font-size:.95rem}
+.bar{height:10px;background:var(--bar);border-radius:99px;margin-top:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.tag{display:inline-block;background:var(--bar);color:var(--text);padding:5px 12px;border-radius:99px;margin:4px 4px 0 0;font-size:.9rem}
+.ghost{background:transparent;color:var(--accent);border:2px solid var(--accent);padding:12px 24px;border-radius:12px;font-weight:600;margin-top:16px}
+.hide{display:none}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.wrap{position:relative;z-index:1}
+.card{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);background:color-mix(in srgb,var(--card) 84%,transparent);box-shadow:0 14px 34px rgba(30,30,80,.18);transition:transform .15s ease-out;will-change:transform}
+.emoji{display:inline-block;animation:spin 6s linear infinite}
+@keyframes spin{from{transform:perspective(400px) rotateY(0)}to{transform:perspective(400px) rotateY(360deg)}}
+.primary{box-shadow:0 6px 0 #3730a3,0 14px 22px rgba(0,0,0,.25);transition:transform .1s,box-shadow .1s}
+.primary:active{transform:translateY(5px);box-shadow:0 1px 0 #3730a3,0 4px 8px rgba(0,0,0,.25)}
+.opt{box-shadow:0 4px 0 var(--line);transition:transform .12s,box-shadow .12s,border-color .12s}
+.opt:hover{transform:translateY(-3px);box-shadow:0 8px 0 var(--line),0 14px 20px rgba(0,0,0,.15)}
+.opt:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.tag{box-shadow:0 3px 0 var(--line)}
+@media (prefers-reduced-motion:reduce){.emoji{animation:none}}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.opt,.card{animation:in .3s}
+.opt:active{transform:scale(.99)}
+.link{background:none;color:var(--muted);padding:8px 0;margin-top:14px;font-size:.9rem}
+ul.uni{padding-left:20px;margin:0}
+ul.uni li{margin:6px 0}
+.credit{text-align:center;margin-top:28px;font-size:.9rem;color:var(--muted)}
+.credit b{color:var(--text)}
+.themes{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;font-size:.85rem;color:var(--muted)}
+.themes button{background:var(--card);color:var(--text);border:2px solid var(--line);padding:6px 12px;border-radius:99px;font-size:.85rem}
+.themes button.on{border-color:var(--accent);color:var(--accent);font-weight:700}
+body[data-style="neon"]{--bg:#05060f;--card:#0d1024;--text:#e8f6ff;--muted:#8fa3c7;--accent:#22e6ff;--accent2:#ff2bd6;--line:#23305c;--bar:#18204a}
+body[data-style="neon"] .card{border:1px solid var(--accent);box-shadow:0 0 26px rgba(34,230,255,.25)}
+body[data-style="neon"] h1,body[data-style="neon"] h2{text-shadow:0 0 14px var(--accent)}
+body[data-style="neon"] .primary{color:#05060f;box-shadow:0 0 20px var(--accent),0 6px 0 #0a7f91}
+body[data-style="neon"] .opt:hover{box-shadow:0 0 16px var(--accent2)}
+body[data-style="pastel"]{--bg:#fff0f6;--card:#ffffff;--text:#3b2f4a;--muted:#8a7b9a;--accent:#ec6fa7;--accent2:#8b7cf6;--line:#f3d6e6;--bar:#fbe3ef}
+body[data-style="pastel"] .card{border-radius:30px;box-shadow:0 12px 30px rgba(236,111,167,.2)}
+body[data-style="pastel"] .opt{border-radius:22px}
+body[data-style="pastel"] .primary{box-shadow:0 6px 0 #c2467f,0 12px 20px rgba(236,111,167,.35)}
+body[data-style="retro"]{--bg:#fff3b0;--card:#ffffff;--text:#111;--muted:#444;--accent:#ff5a36;--accent2:#ffb700;--line:#111;--bar:#ffe27a;font-family:"Courier New",ui-monospace,monospace}
+body[data-style="retro"] #bg{display:none}
+body[data-style="retro"] .card{background:var(--card);backdrop-filter:none;-webkit-backdrop-filter:none;border:3px solid #111;border-radius:0;box-shadow:7px 7px 0 #111}
+body[data-style="retro"] .opt,body[data-style="retro"] .tag,body[data-style="retro"] .primary,body[data-style="retro"] .ghost,body[data-style="retro"] .themes button,body[data-style="retro"] .prog,body[data-style="retro"] .bar,body[data-style="retro"] .bar i{border-radius:0}
+body[data-style="retro"] .primary{background:var(--accent);box-shadow:4px 4px 0 #111;border:3px solid #111}
+body[data-style="retro"] .tag{border:2px solid #111;box-shadow:none}
+body[data-style="retro"] .emoji{animation:none}
+body[data-style="ocean"]{--bg:#0b2f5b;--card:rgba(255,255,255,.14);--text:#ffffff;--muted:#cfe6ff;--accent:#7dd3fc;--accent2:#34d399;--line:rgba(255,255,255,.28);--bar:rgba(255,255,255,.18);background:linear-gradient(160deg,#0a2a5e,#0e7490 60%,#14b8a6)}
+body[data-style="ocean"] .card{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);box-shadow:0 14px 34px rgba(0,30,60,.35)}
+body[data-style="ocean"] .opt{background:rgba(255,255,255,.1)}
+body[data-style="ocean"] .primary{color:#06304f;box-shadow:0 6px 0 #0e7490,0 14px 22px rgba(0,0,0,.25)}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="wrap">
+  <div class="themes" id="themes"></div>
+  <div id="start" class="card hero">
+    <div class="emoji">🚀</div>
+    <h1>Kelajak kasbingni top!</h1>
+    <p>16 ta qisqa savolga javob ber — qiziqishlaring va qobiliyatlaringga mos kasblarni ko‘rsatamiz. To‘g‘ri yoki noto‘g‘ri javob yo‘q, o‘zingga eng yaqinini tanla.</p>
+    <button class="primary" onclick="begin()">Testni boshlash</button>
+  </div>
+
+  <div id="quiz" class="card hide">
+    <div class="small" id="count"></div>
+    <div class="prog"><i id="pbar"></i></div>
+    <h2 id="q" style="margin-top:20px"></h2>
+    <div id="opts"></div>
+    <button class="link" id="back" onclick="back()">← Oldingi savol</button>
+  </div>
+
+  <div id="result" class="hide"></div>
+  <footer class="credit">✨ Sayt muallifi: <b>Kamolov Jasurbek</b>, 10-A sinf<br>Fikr va takliflar uchun: <b>@kaJASURBEK</b></footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+var CATS={
+it:{n:"Axborot texnologiyalari",e:"💻",d:"Sen mantiqiy fikrlaysan, yangi texnologiyalarni sevasan va muammolarni yechishni yoqtirasan.",j:["Dasturchi","Sun’iy intellekt muhandisi","Kiberxavfsizlik mutaxassisi","Ma’lumotlar tahlilchisi","Web va mobil dizayner","Backend dasturchi","O‘yin yaratuvchi (game developer)","DevOps muhandisi","UI/UX dizayner","Tarmoq administratori","Robototexnika dasturchisi","Mobil ilova dasturchisi","Frontend dasturchi","Data scientist","Tizim administratori","Blokcheyn dasturchisi","IT loyiha menejeri","Test muhandisi (QA)","3D modelyer"],s:["Informatika","Matematika","Ingliz tili","Fizika"],x:["Mantiq va algoritmlar","Ona tili","Rus tili","Chizmachilik","Iqtisodiyot asoslari","Dasturlash to‘garagi","Olimpiadalar"]},
+med:{n:"Tibbiyot va sog‘liq",e:"🩺",d:"Sen odamlarga yordam berishni va inson tanasi haqida bilishni yaxshi ko‘rasan.",j:["Shifokor","Hamshira","Stomatolog","Farmatsevt","Psixolog","Jarroh","Pediatr (bolalar shifokori)","Kardiolog","Veterinar","Fizioterapevt","Laborant","Nutritsiolog","Akusher-ginekolog","Nevrolog","Oftalmolog (ko‘z shifokori)","Psixiatr","Tez yordam feldsheri","Radiolog","Dermatolog","Onkolog"],s:["Biologiya","Kimyo","Ona tili","Ingliz tili"],x:["Fizika","Matematika","Lotin tili asoslari","Rus tili","Psixologiya asoslari","Hayot xavfsizligi asoslari","Jismoniy tarbiya"]},
+eng:{n:"Muhandislik va qurilish",e:"🏗️",d:"Sen narsalar qanday ishlashini bilishni, yasash va loyihalashni yoqtirasan.",j:["Quruvchi-muhandis","Mexanik muhandis","Elektrik","Arxitektor","Robototexnika muhandisi","Avtomobil muhandisi","Energetika muhandisi","Geodezist","Interyer dizayner","Aviatsiya muhandisi","Neft va gaz muhandisi","Kimyo muhandisi","Ekologik muhandis","Elektronika muhandisi","Payvandchi-texnolog","Transport muhandisi","Qurilish prorabi","Dron operatori-muhandis","Mashinasozlik texnologi"],s:["Matematika","Fizika","Chizmachilik","Ingliz tili"],x:["Informatika","Kimyo","Geometriya","Texnologiya fani","Ona tili","Rus tili","Robototexnika to‘garagi"]},
+biz:{n:"Biznes va moliya",e:"📈",d:"Sen tashabbuskorsan, raqamlar bilan ishlash va odamlarni boshqarishga qiziqasan.",j:["Tadbirkor","Moliyachi","Marketolog","Menejer","Iqtisodchi","Buxgalter","Auditor","Bank xodimi","Savdo menejeri","Logist","HR mutaxassis","Investor / treyder","Sotuvchi-konsultant","Kredit mutaxassisi","Soliq maslahatchisi","Elektron tijorat mutaxassisi","SMM mutaxassisi","Sug‘urta agenti","Biznes tahlilchi","Eksport-import mutaxassisi"],s:["Matematika","Ingliz tili","Iqtisodiyot asoslari","Ona tili"],x:["Informatika","Huquq asoslari","Rus tili","Geografiya","Tarix","Nutq madaniyati","Xitoy yoki nemis tili"]},
+art:{n:"Ijod va san’at",e:"🎨",d:"Sen xayolotga boysan, o‘z g‘oyalaringni chizma, musiqa yoki matn orqali ifodalaysan.",j:["Grafik dizayner","Video montajchi","Muallif / jurnalist","Musiqachi","Modelyer","Rassom","Aktyor","Rejissyor","Fotograf","Moda dizayneri","Kontent yaratuvchi","Animator","DJ / musiqa prodyuseri","Kinooperator","Stilist","Ssenarist","Teatr rassomi","Blogger","Ovoz rejissyori","Illyustrator"],s:["Adabiyot va ona tili","Tasviriy san’at","Musiqa","Ingliz tili"],x:["Tarix","Informatika","Chizmachilik","Rus tili","Texnologiya fani","Jahon madaniyati","Teatr va rasm to‘garagi"]},
+edu:{n:"Ta’lim va tarbiya",e:"📚",d:"Sen bilimingni boshqalarga o‘rgatishni va ularning o‘sishiga yordam berishni yoqtirasan.",j:["O‘qituvchi","Maktabgacha tarbiyachi","Murabbiy","Metodist","Tarjimon","Logoped","Maktab psixologi","Chet tili o‘qituvchisi","Repetitor","Maktab direktori","Kutubxonachi","Sinf rahbari","O‘quv bo‘limi mudiri","Defektolog","Sport murabbiyi","Jismoniy tarbiya o‘qituvchisi","Onlayn kurs muallimi","Musiqa o‘qituvchisi"],s:["O‘qitmoqchi bo‘lgan fan","Ona tili","Ingliz tili","Pedagogika va psixologiya"],x:["Informatika","Tarix","Rus tili","Matematika","Nutq madaniyati","Tasviriy san’at","Jismoniy tarbiya"]},
+law:{n:"Huquq va ijtimoiy soha",e:"⚖️",d:"Sen adolatni qadrlaysan, gapira olasan va jamiyat muammolariga befarq emassan.",j:["Advokat","Huquqshunos","Diplomat","Ijtimoiy xodim","Siyosatshunos","Sudya","Prokuror","Notarius","Politsiya xodimi","Xalqaro munosabatlar mutaxassisi","Inson huquqlari himoyachisi","Yurist-maslahatchi","Advokat yordamchisi","Bojxona inspektori","Soliq inspektori","Mediator","Deputat yordamchisi","Xalqaro huquqshunos","Tergovchi"],s:["Tarix","Ona tili va adabiyot","Huquq asoslari","Ingliz tili"],x:["Rus tili","Ijtimoiy fanlar","Geografiya","Nutq madaniyati","Debat va notiqlik to‘garagi","Informatika","Arab yoki fransuz tili"]},
+sci:{n:"Fan va tadqiqot",e:"🔬",d:"Sen qiziquvchansan, “nega?” degan savol seni doim qiziqtiradi va tajriba o‘tkazishni yoqtirasan.",j:["Olim-tadqiqotchi","Kimyogar","Biolog","Fizik","Ekolog","Geolog","Astronom","Matematik","Farmakolog","Biotexnolog","Meteorolog","Agronom","Okeanolog","Genetik","Mikrobiolog","Materialshunos","Arxeolog","Seysmolog","Kimyoviy tahlilchi","Nanotexnolog"],s:["Fizika","Kimyo","Biologiya","Matematika"],x:["Ingliz tili","Informatika","Geografiya","Ona tili","Rus tili","Tabiiy fanlar olimpiadalari","Ilmiy loyihalar"]}
+};
+var Q=[
+["Bo‘sh vaqtingda nima qilishni yoqtirasan?",[["Kompyuter yoki telefonda yangi narsalar o‘rganish","it"],["Do‘stlaringga yordam berish, maslahat berish","med"],["Biror narsani yasash yoki tuzatish","eng"],["Pul topish yo‘llarini o‘ylash","biz"]]],
+["Qaysi fan maktabda senga ko‘proq yoqadi?",[["Informatika","it"],["Biologiya","med"],["Fizika va matematika","eng"],["Adabiyot va san’at","art"]]],
+["Guruhda ishlaganda sen odatda…",[["Rejani tuzaman va boshqaraman","biz"],["Hammaga tushuntiraman","edu"],["G‘oyalar o‘ylab topaman","art"],["Fakt va dalillarni tekshiraman","law"]]],
+["Qaysi yutuq seni ko‘proq quvontiradi?",[["Dastur yoki o‘yin yaratsam","it"],["Kimningdir hayotini yaxshilasam","med"],["Yangi kashfiyot qilsam","sci"],["Musobaqada g‘olib bo‘lsam","law"]]],
+["Qaysi ish muhiti senga mos?",[["Laboratoriya","sci"],["Ofis va kompyuter","it"],["Sinfxona yoki auditoriya","edu"],["Qurilish maydoni yoki zavod","eng"]]],
+["Muammo chiqsa, sen…",[["Sababini chuqur tahlil qilaman","sci"],["Boshqalar bilan gaplashib kelishaman","law"],["Yangi, g‘ayrioddiy yechim topaman","art"],["Tizimli, qadam-baqadam hal qilaman","it"]]],
+["Qaysi kitob yoki video senga qiziq?",[["Texnologiya va kelajak haqida","it"],["Inson tanasi va salomatlik haqida","med"],["Biznes va muvaffaqiyat hikoyalari","biz"],["Kashfiyotlar va koinot haqida","sci"]]],
+["Boshqalar seni qanday ta’riflaydi?",[["Sabrli va g‘amxo‘r","med"],["Ijodkor va tasavvuri keng","art"],["Mantiqiy va aniq","eng"],["Notiq va ishontira oladigan","law"]]],
+["Kelajakda nimani xohlaysan?",[["O‘z biznesimni ochish","biz"],["Odamlarni davolash","med"],["Yangi narsa ixtiro qilish","sci"],["Yoshlarga bilim berish","edu"]]],
+["Maktabda qaysi tadbirda ishtirok etishni yoqtirasan?",[["Hackathon yoki robototexnika musobaqasi","it"],["Sog‘lom turmush yoki birinchi yordam kursi","med"],["Yarmarka, savdo yoki loyiha taqdimoti","biz"],["Konsert, teatr yoki ko‘rgazma","art"]]],
+["Qaysi mutaxassis bo‘lib ishlashni tasavvur qilasan?",[["Ixtirochi yoki olim","sci"],["Ustoz","edu"],["Sudya yoki advokat","law"],["Bosh muhandis","eng"]]],
+["Yangi narsani qanday o‘rganasan?",[["Tajriba qilib ko‘rib","sci"],["Videolardan va internetdan","it"],["Birov bilan suhbatlashib","edu"],["O‘zim yasab, qo‘l bilan","eng"]]],
+["Qaysi holat seni ko‘proq qiziqtiradi?",[["Kasal odamni davolash","med"],["Adolatni tiklash","law"],["Reklama va brend yaratish","biz"],["Chiroyli dizayn yaratish","art"]]],
+["Qaysi mashg‘ulot yoqadi?",[["Chizish, musiqa, video","art"],["Konstruktor yoki texnika yig‘ish","eng"],["Dasturlash yoki o‘yin yaratish","it"],["Munozara va debat","law"]]],
+["Sen uchun eng muhimi?",[["Yuqori daromad","biz"],["Jamiyatga foyda keltirish","med"],["Yangi narsalarni o‘rganish","sci"],["O‘zimni erkin ifodalash","art"]]],
+["Birovga biror narsani o‘rgatish senga…",[["Juda yoqadi, rohat qilaman","edu"],["Yoqadi, lekin ko‘proq o‘zim ishlashni yaxshi ko‘raman","it"],["Faqat tushunarli bo‘lsa","eng"],["Odamlar bilan muloqotni yoqtiraman","law"]]]
+];
+var i=0,score={},hist=[];
+var UNI={
+it:["Muhammad al-Xorazmiy nomidagi Toshkent axborot texnologiyalari universiteti (TATU)","Inha universiteti Toshkentda","Westminster xalqaro universiteti Toshkentda (WIUT)","PDP University"],
+med:["Toshkent tibbiyot akademiyasi","Toshkent pediatriya tibbiyot instituti","Toshkent davlat stomatologiya instituti","Toshkent farmatsevtika instituti"],
+eng:["Toshkent davlat texnika universiteti","Toshkent arxitektura-qurilish universiteti","Turin politexnika universiteti Toshkentda"],
+biz:["Toshkent davlat iqtisodiyot universiteti","Toshkent moliya instituti","Westminster xalqaro universiteti Toshkentda (WIUT)"],
+art:["O‘zbekiston davlat san’at va madaniyat instituti","Kamoliddin Behzod nomidagi Milliy rassomlik va dizayn instituti","O‘zbekiston davlat konservatoriyasi","O‘zbekiston jurnalistika va ommaviy kommunikatsiyalar universiteti"],
+edu:["Nizomiy nomidagi Toshkent davlat pedagogika universiteti","O‘zbekiston davlat jahon tillari universiteti","Toshkent davlat sharqshunoslik universiteti"],
+law:["Toshkent davlat yuridik universiteti","Jahon iqtisodiyoti va diplomatiya universiteti","O‘zbekiston Milliy universiteti"],
+sci:["O‘zbekiston Milliy universiteti","Samarqand davlat universiteti","Toshkent kimyo-texnologiya instituti"]
+};
+function back(){if(!i)return;i--;score[hist.pop()]--;show()}
+function shareRes(k){var s="Mening natijam: "+CATS[k].n+" "+CATS[k].e+". Sen ham sinab ko‘r!";var b=$("sh");var cp=function(){if(navigator.clipboard){navigator.clipboard.writeText(s).then(function(){b.textContent="Nusxalandi ✓"}).catch(function(){})}};if(navigator.share){navigator.share({text:s}).catch(cp)}else cp()}
+function $(id){return document.getElementById(id)}
+function begin(){i=0;score={};hist=[];for(var k in CATS)score[k]=0;$("start").classList.add("hide");$("result").classList.add("hide");$("quiz").classList.remove("hide");show()}
+function show(){
+  var q=Q[i];
+  $("count").textContent="Savol "+(i+1)+" / "+Q.length;
+  $("pbar").style.width=(i/Q.length*100)+"%";
+  $("q").textContent=q[0];
+  $("back").style.visibility=i?"visible":"hidden";
+  var h="";
+  q[1].forEach(function(o,idx){h+='<button class="opt" onclick="pick('+idx+')">'+o[0]+'</button>'});
+  $("opts").innerHTML=h;
+}
+function pick(idx){
+  var k=Q[i][1][idx][1];score[k]++;hist.push(k);
+  i++;
+  if(i<Q.length)show();else finish();
+}
+function subj(c){var t=function(a,b){return a.map(function(x){return '<span class="tag"'+(b?' style="border:2px solid var(--accent)"':'')+'>'+x+'</span>'}).join("")};return '<div class="card"><h2>📖 Qaysi fanlardan kuchli tayyorlanish kerak?</h2><p><b>Asosiy fanlar</b> (eng muhim):</p><div>'+t(c.s,1)+'</div><p style="margin-top:14px"><b>Qo‘shimcha fanlar</b> (foyda beradi):</p><div>'+t(c.x)+'</div><p><small>Maslahat: ingliz tili deyarli barcha sohada kerak, uni alohida o‘rgan. Maktab va umumiy imtihonlarda shu fanlarga ko‘proq vaqt ajrat, qo‘shimcha kurs yoki olimpiadalarda qatnash.</small></p></div>'}
+function finish(){
+  $("quiz").classList.add("hide");
+  var arr=Object.keys(score).map(function(k){return [k,score[k]]}).sort(function(a,b){return b[1]-a[1]});
+  var top=CATS[arr[0][0]];
+  var h='<div class="card hero"><div class="emoji">'+top.e+'</div><p>Senga eng mos soha</p><h1>'+top.n+'</h1><p>'+top.d+'</p></div>';
+  h+='<div class="card"><h2>Mos kasblar</h2><div>'+top.j.map(function(x){return '<span class="tag">'+x+'</span>'}).join("")+'</div></div>';
+  h+=subj(top);var second=CATS[arr[1][0]];
+  if(arr[1][1]>0){h+='<div class="card"><h2>Ikkinchi yo‘nalish: '+second.e+' '+second.n+'</h2><div>'+second.j.slice(0,6).map(function(x){return '<span class="tag">'+x+'</span>'}).join("")+'</div></div>'}
+  h+='<div class="card"><h2>Barcha natijalar</h2>';
+  arr.forEach(function(a){var p=Math.round(a[1]/Q.length*100);h+='<div class="row"><b><span>'+CATS[a[0]].e+' '+CATS[a[0]].n+'</span><span>'+p+'%</span></b><div class="bar"><i style="width:'+p+'%"></i></div></div>'});
+  h+='</div><div class="card"><h2>Qayerda o‘qish mumkin?</h2><ul class="uni">'+UNI[arr[0][0]].map(function(x){return '<li>'+x+'</li>'}).join("")+'</ul><p><small>Qabul shartlari har yili o‘zgaradi — rasmiy saytlardan tekshir.</small></p></div><div class="card"><h2>Keyingi qadamlar</h2><p>• Tanlangan soha vakillari bilan suhbatlash.<br>• Shu yo‘nalishdagi oliy ta’lim muassasalari va kurslarni o‘rgan.<br>• Kichik loyiha yoki to‘garakda sinab ko‘r.<br>• Ota-onang va o‘qituvching bilan maslahatlash.</p><p><small>Bu test faqat yo‘nalish beradi. Yakuniy qaror — sening qiziqishing va mehnating bilan.</small></p><button class="primary" id="sh" onclick="shareRes(\''+arr[0][0]+'\')">Natijani ulashish</button> <button class="ghost" onclick="begin()">Qayta ishlash</button></div>';
+  var r=$("result");r.innerHTML=h;r.classList.remove("hide");window.scrollTo(0,0);
+}
+(function(){
+try{
+if(!window.THREE)return;
+var cv=document.getElementById("bg"),R=new THREE.WebGLRenderer({canvas:cv,alpha:true,antialias:true});
+R.setPixelRatio(Math.min(devicePixelRatio,2));
+var S=new THREE.Scene(),C=new THREE.PerspectiveCamera(60,1,.1,100);C.position.z=14;
+S.add(new THREE.AmbientLight(0xffffff,.6));
+var L=new THREE.PointLight(0xffffff,1.2);L.position.set(6,8,10);S.add(L);
+var cols=[0x4f46e5,0x7c3aed,0x06b6d4,0xf59e0b,0xec4899,0x10b981];
+var geos=[new THREE.IcosahedronGeometry(1,0),new THREE.TorusGeometry(.9,.35,16,40),new THREE.OctahedronGeometry(1.1),new THREE.BoxGeometry(1.3,1.3,1.3),new THREE.TorusKnotGeometry(.7,.25,60,8)];
+var M=[];
+for(var n=0;n<14;n++){
+var m=new THREE.Mesh(geos[n%5],new THREE.MeshStandardMaterial({color:cols[n%6],roughness:.35,metalness:.3,flatShading:true}));
+m.position.set((Math.random()-.5)*26,(Math.random()-.5)*18,-Math.random()*10-2);
+m.userData={r:[Math.random()*.01+.003,Math.random()*.01+.003],f:Math.random()*6};
+m.scale.setScalar(Math.random()*.5+.6);S.add(m);M.push(m)}
+function rs(){var w=innerWidth,h=innerHeight;R.setSize(w,h,false);C.aspect=w/h;C.updateProjectionMatrix()}
+rs();addEventListener("resize",rs);
+var mx=0,my=0;
+addEventListener("pointermove",function(e){mx=e.clientX/innerWidth-.5;my=e.clientY/innerHeight-.5});
+var t=0;
+function loop(){
+t+=.01;
+M.forEach(function(m){m.rotation.x+=m.userData.r[0];m.rotation.y+=m.userData.r[1];m.position.y+=Math.sin(t+m.userData.f)*.004});
+C.position.x+=(mx*3-C.position.x)*.05;C.position.y+=(-my*2-C.position.y)*.05;C.lookAt(0,0,0);
+R.render(S,C);requestAnimationFrame(loop)}
+loop();
+}catch(e){}
+})();
+document.addEventListener("pointermove",function(e){
+if(e.pointerType!=="mouse")return;
+var c=e.target.closest?e.target.closest(".card"):null;
+document.querySelectorAll(".card.tilt").forEach(function(x){if(x!==c){x.style.transform="";x.classList.remove("tilt")}});
+if(c){var r=c.getBoundingClientRect(),px=(e.clientX-r.left)/r.width-.5,py=(e.clientY-r.top)/r.height-.5;
+c.classList.add("tilt");c.style.transform="perspective(900px) rotateY("+(px*8)+"deg) rotateX("+(-py*8)+"deg)"}
+});
+var STY=[["std","Standart"],["neon","Neon"],["pastel","Pastel"],["retro","Retro"],["ocean","Okean"]];
+function setStyle(s){document.body.setAttribute("data-style",s);try{localStorage.setItem("kt_style",s)}catch(e){}
+document.querySelectorAll(".themes button").forEach(function(b){b.classList.toggle("on",b.dataset.s===s)})}
+(function(){var h="";STY.forEach(function(x){h+='<button data-s="'+x[0]+'" onclick="setStyle(\''+x[0]+'\')">'+x[1]+'</button>'});
+$("themes").innerHTML='<span>🎨 Dizayn:</span>'+h;var s="std";try{s=localStorage.getItem("kt_style")||"std"}catch(e){}setStyle(s)})();
+</script>
+</body>
+</html>
