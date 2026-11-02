@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduControl Pro - Maktab Boshqaruv va Jonli Dars Tizimi</title>
+  
+  <!-- Firebase SDK (Bulutli Realtime Database uchun) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --success: #059669;
+      --success-bg: rgba(16, 185, 129, 0.1);
+      --warning: #d97706;
+      --warning-bg: rgba(245, 158, 11, 0.1);
+      --danger: #dc2626;
+      --danger-bg: rgba(239, 68, 68, 0.1);
+      --dark: #0f172a;
+      --muted: #64748b;
+      --border: rgba(0, 0, 0, 0.1);
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --input-bg: #f1f5f9;
+      --input-text: #0f172a;
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    [data-theme="dark"] {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.15);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --dark: #090d16;
+      --muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.1);
+      --bg: #090d16;
+      --card-bg: rgba(15, 23, 42, 0.85);
+      --text: #ffffff;
+      --text-muted: #94a3b8;
+      --input-bg: rgba(15, 23, 42, 0.6);
+      --input-text: #ffffff;
+      --shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    .topbar {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .topbar-inner {
+      max-width: 1350px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand { display: flex; align-items: center; gap: 14px; }
+    .brand-logo {
+      width: 46px; height: 46px; border-radius: 12px;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+      color: #fff;
+    }
+    .brand h1 { font-size: 19px; font-weight: 700; color: var(--text); }
+    .brand p { font-size: 12px; color: var(--text-muted); }
+    .top-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    
+    .clock-card {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      padding: 6px 16px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .clock-time { font-family: monospace; font-size: 17px; font-weight: 700; color: var(--primary); }
+    .clock-day { font-size: 11px; color: var(--text-muted); }
+    
+    .user-pill {
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.3);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .theme-btn {
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      transition: 0.2s;
+    }
+    .theme-btn:hover { opacity: 0.8; }
+
+    .container { max-width: 1350px; margin: 28px auto; padding: 0 16px; }
+    .auth-grid {
+      max-width: 900px; margin: 40px auto;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;
+    }
+    .admin-grid { display: grid; grid-template-columns: 1fr 400px; gap: 24px; }
+    @media (max-width: 980px) { .admin-grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      transition: background 0.3s ease, border 0.3s ease;
+    }
+    .card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 10px; margin-bottom: 16px;
+    }
+    .card-title { font-size: 18px; font-weight: 700; color: var(--text); }
+    .card-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; }
+
+    .stats-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px; margin-bottom: 24px;
+    }
+    .stat-box {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-left: 5px solid var(--primary);
+      border-radius: 14px; padding: 18px;
+      box-shadow: var(--shadow);
+    }
+    .stat-box.green { border-left-color: var(--success); }
+    .stat-box.amber { border-left-color: var(--warning); }
+    .stat-label { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-num { font-size: 28px; font-weight: 800; margin-top: 6px; color: var(--text); }
+
+    .form-group { margin-bottom: 14px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    label { display: block; font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    input, select, textarea {
+      width: 100%; padding: 12px 14px; border: 1px solid var(--border);
+      border-radius: 10px; font-size: 14px; outline: none; background: var(--input-bg); color: var(--input-text);
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99,102,241,0.2); }
+    input::placeholder, textarea::placeholder { color: var(--muted); }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 18px; border-radius: 10px; font-size: 14px; font-weight: 700;
+      border: none; cursor: pointer; transition: 0.2s ease;
+    }
+    .btn-full { width: 100%; }
+    .btn-primary { background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; box-shadow: 0 4px 15px rgba(99,102,241,0.3); }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-success { background: linear-gradient(135deg, #10b981, #059669); color: #fff; box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
+    .btn-success:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-danger { background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+    .btn-danger:hover { background: var(--danger); color: #fff; }
+    .btn-light { background: var(--input-bg); color: var(--text); border: 1px solid var(--border); }
+    .btn-light:hover { opacity: 0.8; }
+    .btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+
+    .tabs { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+    .tab-btn {
+      padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 700;
+      border: 1px solid var(--border); background: var(--card-bg); cursor: pointer; color: var(--text-muted);
+      box-shadow: var(--shadow);
+    }
+    .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); box-shadow: 0 4px 15px rgba(99,102,241,0.3); }
+
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 18px; }
+    .monitor-card {
+      border: 1px solid var(--border); border-radius: 14px; padding: 18px;
+      background: var(--card-bg); display: flex; flex-direction: column; justify-content: space-between;
+      box-shadow: var(--shadow); transition: 0.2s;
+    }
+    .monitor-card.active-lesson {
+      border: 2px solid var(--success); background: var(--success-bg);
+    }
+    .badge {
+      display: inline-block; padding: 4px 12px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+    }
+    .badge-green { background: #10b981; color: #fff; }
+    .badge-gray { background: var(--border); color: var(--text-muted); }
+    .badge-amber { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245,158,11,0.3); }
+
+    .progress-wrap {
+      width: 100%; height: 8px; background: var(--border);
+      border-radius: 10px; overflow: hidden; margin: 10px 0;
+    }
+    .progress-fill { height: 100%; background: var(--success); transition: width 0.4s; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); color: var(--text); }
+    th { background: var(--input-bg); color: var(--text-muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .table-wrap { overflow-x: auto; }
+
+    .alert {
+      padding: 12px 16px; border-radius: 10px; font-size: 13px;
+      font-weight: 600; margin-bottom: 16px; display: none;
+    }
+    .alert-error { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+    .alert-ok { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+    .hidden { display: none !important; }
+
+    .announcement-box {
+      background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(236,72,153,0.15));
+      border: 1px solid var(--primary);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+    }
+    .announcement-title { font-weight: 800; font-size: 14px; color: var(--primary); display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .announcement-text { font-size: 14px; color: var(--text); }
+
+    .site-footer {
+      text-align: center;
+      padding: 30px 16px;
+      margin-top: 50px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+    .site-footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .site-footer a:hover { text-decoration: underline; }
+
+    @media print {
+      body { background: #fff !important; color: #000 !important; }
+      .topbar, .tabs, .btn, form, header, footer, .auth-grid, select, input { display: none !important; }
+      .card { border: none !important; box-shadow: none !important; padding: 0 !important; }
+      .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+      table { border: 1px solid #000 !important; }
+      th, td { border: 1px solid #000 !important; color: #000 !important; }
+    }
+  </style>
+</head>
+<body data-theme="light">
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-logo">🏫</div>
+        <div>
+          <h1 id="schoolTitleDisplay">EduControl - Maktab Tizimi</h1>
+          <p>O'qituvchilar faoliyati va dars jadvalini jonli nazorat qilish portali</p>
+        </div>
+      </div>
+      <div class="top-right">
+        <button class="theme-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Tungi / Kunduzgi rejim">🌙</button>
+        <div class="clock-card">
+          <div id="liveClock" class="clock-time">00:00:00</div>
+          <div id="liveDay" class="clock-day">Dushanba</div>
+        </div>
+        <div id="navUserArea" class="hidden" style="display:flex; align-items:center; gap:12px;">
+          <span id="navUserName" class="user-pill"></span>
+          <button class="btn btn-danger btn-sm" onclick="logout()">Chiqish</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <section id="authSection" class="auth-grid">
+      <div class="card">
+        <h2 class="card-title" style="margin-bottom:6px;">🔐 Tizimga kirish</h2>
+        <p class="card-desc">Shaxsiy login va parolingizni kiriting</p>
+        <div id="loginAlert" class="alert alert-error"></div>
+        <form onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label>Login</label>
+            <input type="text" id="loginInput" required autocomplete="username" placeholder="Loginingizni kiriting">
+          </div>
+          <div class="form-group">
+            <label>Parol</label>
+            <input type="password" id="passInput" required autocomplete="current-password" placeholder="Parolingizni kiriting">
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" style="margin-top:8px;">Tizimga kirish</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title" style="margin-bottom:6px;">👨‍🏫 O'qituvchi ro'yxatdan o'tishi</h2>
+        <p class="card-desc">Maktab o'qituvchilari shaxsiy profil yaratish oynasi</p>
+        <div id="regAlert" class="alert"></div>
+        <form onsubmit="handleRegister(event)">
+          <div class="form-group">
+            <label>F.I.Sh (To'liq ism va familiya)</label>
+            <input type="text" id="regFullName" required placeholder="Masalan: Karimov Anvarjon">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Mutaxassislik fani</label>
+              <input type="text" id="regSubject" required placeholder="Matematika">
+            </div>
+            <div class="form-group">
+              <label>Telefon raqami</label>
+              <input type="text" id="regPhone" required placeholder="+998 90 123 45 67">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Yangi Login</label>
+              <input type="text" id="regLogin" required placeholder="anvar_ustoz">
+            </div>
+            <div class="form-group">
+              <label>Parol</label>
+              <input type="password" id="regPass" required minlength="4" placeholder="Kamida 4 ta belgi">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-success btn-full" style="margin-top:8px;">Ro'yxatdan o'tish</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="adminSection" class="hidden">
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-label">Jami o'qituvchilar</div>
+          <div id="statTotalTeachers" class="stat-num">0</div>
+        </div>
+        <div class="stat-box green">
+          <div class="stat-label">Hozir dars o'tayotganlar</div>
+          <div id="statInLesson" class="stat-num" style="color:var(--success);">0</div>
+        </div>
+        <div class="stat-box amber">
+          <div class="stat-label">Hozir darsdan bo'shlar</div>
+          <div id="statFreeTeachers" class="stat-num" style="color:var(--warning);">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Jami kiritilgan darslar</div>
+          <div id="statTotalLessons" class="stat-num">0</div>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" id="tabBtnMonitor" onclick="switchAdminTab('monitor')">📡 Jonli kuzatuv va Jadval</button>
+        <button class="tab-btn" id="tabBtnTeachers" onclick="switchAdminTab('teachers')">👥 O'qituvchilar ro'yxati</button>
+        <button class="tab-btn" id="tabBtnSettings" onclick="switchAdminTab('settings')">⚙️ Tizim va Sozlamalar</button>
+      </div>
+
+      <div id="adminTabMonitor" class="admin-grid">
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">📡 O'qituvchilarni real vaqtda kuzatish</div>
+                <div style="font-size:12px; color:var(--text-muted);">Ayni daqiqadagi dars jarayoni, xona va o'qituvchi kiritgan mavzular</div>
+              </div>
+              <input type="text" id="searchMonitor" oninput="renderAdminMonitor()" placeholder="O'qituvchi, fan yoki xona..." style="max-width:230px;">
+            </div>
+            <div id="liveMonitorCards" class="cards-grid"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📅 Barcha biriktirilgan darslar jadvali</div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <select id="adminFilterDay" onchange="renderAdminScheduleTable()" style="max-width:160px;">
+                  <option value="all">Barcha kunlar</option>
+                  <option value="1">Dushanba</option>
+                  <option value="2">Seshanba</option>
+                  <option value="3">Chorshanba</option>
+                  <option value="4">Payshanba</option>
+                  <option value="5">Juma</option>
+                  <option value="6">Shanba</option>
+                </select>
+                <button class="btn btn-light btn-sm" onclick="window.print()">🖨️ Chop etish</button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Kun</th>
+                    <th>Soat</th>
+                    <th>O'qituvchi</th>
+                    <th>Sinf va Fan</th>
+                    <th>Xona</th>
+                    <th>Amal</th>
+                  </tr>
+                </thead>
+                <tbody id="adminScheduleBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:6px;">➕ O'qituvchiga dars biriktirish</div>
+            <p class="card-desc">Dars kuni, aniq vaqti, sinf va xonani belgilang</p>
+            <div id="lessonFormAlert" class="alert"></div>
+            <form onsubmit="handleAddLesson(event)">
+              <div class="form-group">
+                <label>O'qituvchini tanlang</label>
+                <select id="lessonTeacherSelect" required></select>
+              </div>
+              <div class="form-group">
+                <label>Hafta kuni</label>
+                <select id="lessonDay" required>
+                  <option value="1">Dushanba</option>
+                  <option value="2">Seshanba</option>
+                  <option value="3">Chorshanba</option>
+                  <option value="4">Payshanba</option>
+                  <option value="5">Juma</option>
+                  <option value="6">Shanba</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Boshlanish soati</label>
+                  <input type="time" id="lessonStart" required value="08:00">
+                </div>
+                <div class="form-group">
+                  <label>Tugash soati</label>
+                  <input type="time" id="lessonEnd" required value="08:45">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Sinf va Fan nomi</label>
+                <input type="text" id="lessonSubject" required placeholder="Masalan: 9-A sinf | Algebra">
+              </div>
+              <div class="form-group">
+                <label>O'tiladigan xona</label>
+                <input type="text" id="lessonRoom" required placeholder="Masalan: 204-xona">
+              </div>
+              <button type="submit" class="btn btn-primary btn-full" style="margin-top:6px;">Jadvalga saqlash</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div id="adminTabTeachers" class="hidden">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">👥 Ro'yxatdan o'tgan o'qituvchilar boshqaruvi</div>
+            <button class="btn btn-success btn-sm" onclick="exportTeachersExcel()">📊 Excel hisobotini yuklab olish</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>F.I.Sh</th>
+                  <th>Mutaxassisligi</th>
+                  <th>Telefon</th>
+                  <th>Login</th>
+                  <th>Parolni yangilash</th>
+                  <th>Amal</th>
+                </tr>
+              </thead>
+              <tbody id="teachersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div id="adminTabSettings" class="hidden">
+        <div class="auth-grid" style="margin:0; max-width:100%;">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:6px;">⚙️ Tizim sozlamalari va E'lonlar</div>
+            <p class="card-desc">Maktab nomi, direktor paroli va Telegram bot ma'lumotlari</p>
+            <div id="settingsAlert" class="alert"></div>
+            <form onsubmit="handleSaveAdminSettings(event)">
+              <div class="form-group">
+                <label>Maktab nomi (Sarlavhada ko'rinadi)</label>
+                <input type="text" id="setSchoolName" required>
+              </div>
+              <div class="form-group">
+                <label>Barcha o'qituvchilar uchun e'lon matni:</label>
+                <textarea id="setAnnouncement" rows="2" placeholder="Masalan: Ertaga soat 10:00 da umumiy majlis bo'ladi..."></textarea>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>🤖 Telegram Bot Token</label>
+                  <input type="text" id="setBotToken" placeholder="123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ">
+                </div>
+                <div class="form-group">
+                  <label>💬 Telegram Chat ID</label>
+                  <input type="text" id="setChatId" placeholder="-100123456789 yoki @kanal">
+                </div>
+              </div>
+              <div class="form-row" style="margin-top:14px;">
+                <div class="form-group">
+                  <label>Yangi Boshqaruvchi Logini</label>
+                  <input type="text" id="setAdminLogin" required minlength="4">
+                </div>
+                <div class="form-group">
+                  <label>Yangi Maxfiy Parol</label>
+                  <input type="text" id="setAdminPass" required minlength="6">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary" style="margin-top:6px;">O'zgarishlarni saqlash</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="teacherSection" class="hidden">
+      <div id="teacherAnnouncementArea" class="hidden announcement-box">
+        <div class="announcement-title">📢 Direktorning muhim e'loni:</div>
+        <div id="teacherAnnouncementText" class="announcement-text"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" style="margin-bottom:0;">
+          <div>
+            <span class="badge badge-green" style="margin-bottom:6px;">O'qituvchi shaxsiy profili</span>
+            <h2 id="profName" style="font-size:22px; font-weight:800; color:var(--text);"></h2>
+            <p id="profMeta" style="font-size:14px; color:var(--text-muted); margin-top:2px;"></p>
+          </div>
+          <div style="display:flex; gap:16px; align-items:center;">
+            <div style="text-align:right;">
+              <div style="font-size:12px; color:var(--text-muted);">Haftalik darslarim</div>
+              <div id="profLessonCount" style="font-size:22px; font-weight:800; color:var(--primary);">0 soat</div>
+            </div>
+            <div style="text-align:right; border-left:1px solid var(--border); padding-left:16px;">
+              <div style="font-size:12px; color:var(--text-muted);">Tasdiqlaganlarim</div>
+              <div id="profConfirmedCount" style="font-size:22px; font-weight:800; color:var(--success);">0 ta</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="teacherLiveBanner" style="margin-bottom:24px;"></div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">🕒 Mening dars jadvalim (Qachon va qaysi soatda)</div>
+            <div style="font-size:12px; color:var(--text-muted);">Kunlar va soatlar kesimida o'tiladigan barcha darslaringiz</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <select id="teacherDayFilter" onchange="renderTeacherProfile()" style="max-width:160px;">
+              <option value="all">Barcha kunlar</option>
+              <option value="1">Dushanba</option>
+              <option value="2">Seshanba</option>
+              <option value="3">Chorshanba</option>
+              <option value="4">Payshanba</option>
+              <option value="5">Juma</option>
+              <option value="6">Shanba</option>
+            </select>
+            <button class="btn btn-light btn-sm" onclick="window.print()">🖨️ Chop etish</button>
+          </div>
+        </div>
+        <div id="teacherScheduleGrid" class="cards-grid"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    ✨ Sayt muallifi: <b>Kamolov Jasurbek</b> (10-A sinf) &nbsp;|&nbsp; Fikr va takliflar uchun: <a href="https://t.me/kaJASURBEK" target="_blank">@kaJASURBEK</a>
+  </footer>
+
+  <script>
+    // Firebase Bulutli Bazasi Config (Sizning shaxsiy bazangiz)
+    const firebaseConfig = {
+      apiKey: "AIzaSyAcO3kEAEaYN5JQ_TEy4ub7gx3nPQn1QzE",
+      authDomain: "educontrol-30197.firebaseapp.com",
+      databaseURL: "https://educontrol-30197-default-rtdb.firebaseio.com",
+      projectId: "educontrol-30197",
+      storageBucket: "educontrol-30197.firebasestorage.app",
+      messagingSenderId: "861168549583",
+      appId: "1:861168549583:web:581040de0545afe0ee01ba",
+      measurementId: "G-806C0F2YWV"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const DAYS_UZ = {
+      0: "Yakshanba", 1: "Dushanba", 2: "Seshanba",
+      3: "Chorshanba", 4: "Payshanba", 5: "Juma", 6: "Shanba"
+    };
+
+    let config = { 
+      schoolName: "EduControl - Maktab Tizimi", 
+      adminLogin: "direktor", 
+      adminPass: "Maktab/9942", 
+      announcement: "",
+      botToken: "",
+      chatId: ""
+    };
+    let teachers = [];
+    let lessons = [];
+    let checkins = {};
+    let currentUser = JSON.parse(sessionStorage.getItem("educontrol_session")) || null;
+
+    // Realtime Database orqali ma'lumotlarni doimiy sinxron qilish
+    db.ref("appData").on("value", (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        if (data.config) config = data.config;
+        teachers = data.teachers || [];
+        lessons = data.lessons || [];
+        checkins = data.checkins || {};
+      }
+      initAppView();
+    });
+
+    function syncToFirebase() {
+      db.ref("appData").set({ config, teachers, lessons, checkins });
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      const currentTheme = body.getAttribute("data-theme");
+      const newTheme = currentTheme === "dark" ? "light" : "dark";
+      body.setAttribute("data-theme", newTheme);
+      localStorage.setItem("educontrol_theme", newTheme);
+      document.getElementById("themeToggleBtn").textContent = newTheme === "dark" ? "☀️" : "🌙";
+    }
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem("educontrol_theme") || "light";
+      document.body.setAttribute("data-theme", savedTheme);
+      document.getElementById("themeToggleBtn").textContent = savedTheme === "dark" ? "☀️" : "🌙";
+    }
+
+    function timeToMinutes(t) {
+      const [h, m] = t.split(":").map(Number);
+      return h * 60 + m;
+    }
+
+    function getNow() {
+      const d = new Date();
+      const hh = String(d.getHours()).padStart(2, "0");
+      const mm = String(d.getMinutes()).padStart(2, "0");
+      const ss = String(d.getSeconds()).padStart(2, "0");
+      return {
+        dateKey: d.toISOString().slice(0, 10),
+        day: d.getDay(),
+        dayName: DAYS_UZ[d.getDay()],
+        hm: `${hh}:${mm}`,
+        hms: `${hh}:${mm}:${ss}`,
+        totalMin: d.getHours() * 60 + d.getMinutes()
+      };
+    }
+
+    function showAlert(id, msg, isOk = false) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.className = "alert " + (isOk ? "alert-ok" : "alert-error");
+      el.style.display = "block";
+      setTimeout(() => { el.style.display = "none"; }, 4000);
+    }
+
+    function sendTelegramNotification(text) {
+      if (!config.botToken || !config.chatId) return;
+      const url = `https://api.telegram.org/bot${config.botToken}/sendMessage`;
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: config.chatId,
+          text: text,
+          parse_mode: "HTML"
+        })
+      }).catch(err => console.log("Telegram xatolik:", err));
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const login = document.getElementById("loginInput").value.trim();
+      const pass = document.getElementById("passInput").value;
+
+      if (login === config.adminLogin && pass === config.adminPass) {
+        currentUser = { role: "admin", name: "Boshqaruvchi" };
+        sessionStorage.setItem("educontrol_session", JSON.stringify(currentUser));
+        e.target.reset();
+        initAppView();
+        return;
+      }
+
+      const found = teachers.find(t => t.login.toLowerCase() === login.toLowerCase() && t.pass === pass);
+      if (!found) {
+        showAlert("loginAlert", "Login yoki parol noto'g'ri kiritildi!");
+        return;
+      }
+
+      currentUser = { role: "teacher", login: found.login };
+      sessionStorage.setItem("educontrol_session", JSON.stringify(currentUser));
+      e.target.reset();
+      initAppView();
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById("regFullName").value.trim();
+      const subject = document.getElementById("regSubject").value.trim();
+      const phone = document.getElementById("regPhone").value.trim();
+      const login = document.getElementById("regLogin").value.trim();
+      const pass = document.getElementById("regPass").value;
+
+      if (login.toLowerCase() === config.adminLogin.toLowerCase() ||
+          teachers.some(t => t.login.toLowerCase() === login.toLowerCase())) {
+        showAlert("regAlert", "Ushbu login band! Iltimos, boshqa login tanlang.");
+        return;
+      }
+
+      teachers.push({
+        id: Date.now(),
+        name,
+        subject,
+        phone,
+        login,
+        pass,
+        createdAt: new Date().toLocaleDateString("uz-UZ")
+      });
+      syncToFirebase();
+      e.target.reset();
+
+      currentUser = { role: "teacher", login };
+      sessionStorage.setItem("educontrol_session", JSON.stringify(currentUser));
+      initAppView();
+    }
+
+    function logout() {
+      currentUser = null;
+      sessionStorage.removeItem("educontrol_session");
+      initAppView();
+    }
+
+    function initAppView() {
+      document.getElementById("schoolTitleDisplay").textContent = config.schoolName;
+      const authSec = document.getElementById("authSection");
+      const adminSec = document.getElementById("adminSection");
+      const teacherSec = document.getElementById("teacherSection");
+      const navUser = document.getElementById("navUserArea");
+
+      authSec.classList.add("hidden");
+      adminSec.classList.add("hidden");
+      teacherSec.classList.add("hidden");
+      navUser.classList.add("hidden");
+
+      if (!currentUser) {
+        authSec.classList.remove("hidden");
+        return;
+      }
+
+      navUser.classList.remove("hidden");
+      if (currentUser.role === "admin") {
+        document.getElementById("navUserName").textContent = "🛡️ Maktab Boshqaruvchisi";
+        adminSec.classList.remove("hidden");
+        populateTeacherDropdown();
+        loadSettingsInputs();
+        renderAdminMonitor();
+        renderAdminScheduleTable();
+        renderTeachersTable();
+      } else {
+        const t = teachers.find(x => x.login === currentUser.login);
+        if (!t) { logout(); return; }
+        document.getElementById("navUserName").textContent = "👨‍🏫 " + t.name;
+        teacherSec.classList.remove("hidden");
+        renderTeacherProfile();
+      }
+    }
+
+    function getTeacherLiveStatus(teacherLogin) {
+      const now = getNow();
+      const todayLessons = lessons
+        .filter(l => l.teacherLogin === teacherLogin && Number(l.day) === now.day)
+        .sort((a, b) => timeToMinutes(a.start) - timeToMinutes(b.start));
+
+      let active = null;
+      let next = null;
+
+      for (const l of todayLessons) {
+        const s = timeToMinutes(l.start);
+        const e = timeToMinutes(l.end);
+        if (now.totalMin >= s && now.totalMin < e) {
+          const duration = Math.max(1, e - s);
+          const elapsed = now.totalMin - s;
+          const remaining = e - now.totalMin;
+          const percent = Math.min(100, Math.round((elapsed / duration) * 100));
+          active = { ...l, elapsed, remaining, percent };
+          break;
+        }
+        if (s > now.totalMin && !next) {
+          next = l;
+        }
+      }
+      return { active, next, todayCount: todayLessons.length };
+    }
+
+    function switchAdminTab(tab) {
+      document.getElementById("adminTabMonitor").classList.toggle("hidden", tab !== "monitor");
+      document.getElementById("adminTabTeachers").classList.toggle("hidden", tab !== "teachers");
+      document.getElementById("adminTabSettings").classList.toggle("hidden", tab !== "settings");
+
+      document.getElementById("tabBtnMonitor").classList.toggle("active", tab === "monitor");
+      document.getElementById("tabBtnTeachers").classList.toggle("active", tab === "teachers");
+      document.getElementById("tabBtnSettings").classList.toggle("active", tab === "settings");
+    }
+
+    function populateTeacherDropdown() {
+      const sel = document.getElementById("lessonTeacherSelect");
+      if (teachers.length === 0) {
+        sel.innerHTML = `<option value="">Hali o'qituvchilar ro'yxatdan o'tmagan</option>`;
+        return;
+      }
+      sel.innerHTML = teachers.map(t =>
+        `<option value="${t.login}">${t.name} (${t.subject})</option>`
+      ).join("");
+    }
+
+    function handleAddLesson(e) {
+      e.preventDefault();
+      const teacherLogin = document.getElementById("lessonTeacherSelect").value;
+      if (!teacherLogin) {
+        showAlert("lessonFormAlert", "Avval kamida bitta o'qituvchi ro'yxatdan o'tishi kerak!");
+        return;
+      }
+      const day = Number(document.getElementById("lessonDay").value);
+      const start = document.getElementById("lessonStart").value;
+      const end = document.getElementById("lessonEnd").value;
+      const subject = document.getElementById("lessonSubject").value.trim();
+      const room = document.getElementById("lessonRoom").value.trim();
+
+      if (timeToMinutes(end) <= timeToMinutes(start)) {
+        showAlert("lessonFormAlert", "Tugash soati boshlanish soatidan keyin bo'lishi shart!");
+        return;
+      }
+
+      lessons.push({ id: Date.now(), teacherLogin, day, start, end, subject, room });
+      syncToFirebase();
+      document.getElementById("lessonSubject").value = "";
+      document.getElementById("lessonRoom").value = "";
+      showAlert("lessonFormAlert", "Dars jadvalga muvaffaqiyatli qo'shildi!", true);
+    }
+
+    function deleteLesson(id) {
+      if (!confirm("Ushbu darsni jadvaldan o'chirmoqchimisiz?")) return;
+      lessons = lessons.filter(l => l.id !== id);
+      syncToFirebase();
+    }
+
+    function renderAdminMonitor() {
+      const q = (document.getElementById("searchMonitor")?.value || "").toLowerCase();
+      const box = document.getElementById("liveMonitorCards");
+      if (!box) return;
+      const now = getNow();
+
+      let inLessonCount = 0;
+      teachers.forEach(t => {
+        if (getTeacherLiveStatus(t.login).active) inLessonCount++;
+      });
+
+      document.getElementById("statTotalTeachers").textContent = teachers.length;
+      document.getElementById("statInLesson").textContent = inLessonCount;
+      document.getElementById("statFreeTeachers").textContent = Math.max(0, teachers.length - inLessonCount);
+      document.getElementById("statTotalLessons").textContent = lessons.length;
+
+      if (teachers.length === 0) {
+        box.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:28px; color:var(--text-muted);">
+          Hozircha ro'yxatdan o'tgan o'qituvchilar yo'q. O'qituvchilar o'z telefonlaridan ro'yxatdan o'tishi bilan shu yerda jonli ko'rinadi.
+        </div>`;
+        return;
+      }
+
+      const filtered = teachers.filter(t => {
+        const st = getTeacherLiveStatus(t.login);
+        const matchText = (t.name + " " + t.subject + " " + (st.active?.room || "") + " " + (st.active?.subject || "")).toLowerCase();
+        return matchText.includes(q);
+      });
+
+      box.innerHTML = filtered.map(t => {
+        const st = getTeacherLiveStatus(t.login);
+        if (st.active) {
+          const checkKey = `${now.dateKey}_${st.active.id}`;
+          const checkData = checkins[checkKey];
+          return `
+            <div class="monitor-card active-lesson">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                  <div>
+                    <div style="font-weight:800; font-size:15px;">${t.name}</div>
+                    <div style="font-size:12px; color:var(--success); font-weight:600;">${t.subject} | ${t.phone}</div>
+                  </div>
+                  <span class="badge badge-green">● DARSDA</span>
+                </div>
+                <div style="margin-top:12px; background:var(--input-bg); padding:10px 12px; border-radius:10px; border:1px solid var(--border);">
+                  <div style="font-weight:800; font-size:14px;">${st.active.subject}</div>
+                  <div style="font-size:12px; color:var(--text-muted); margin-top:2px;">
+                    📍 <b>${st.active.room}</b> &nbsp;|&nbsp; 🕒 <b>${st.active.start} - ${st.active.end}</b>
+                  </div>
+                  ${checkData && checkData.topic ? `<div style="margin-top:6px; font-size:12px; color:var(--primary);">📌 Mavzu: <b>${checkData.topic}</b></div>` : ''}
+                  <div class="progress-wrap"><div class="progress-fill" style="width:${st.active.percent}%;"></div></div>
+                  <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; color:var(--success);">
+                    <span>${st.active.elapsed} daq. o'tdi (${st.active.percent}%)</span>
+                    <span>Tugashiga ${st.active.remaining} daq.</span>
+                  </div>
+                </div>
+              </div>
+              <div style="margin-top:10px; font-size:12px; font-weight:700;">
+                ${checkData
+                  ? `<span style="color:var(--success);">✔ Tasdiqlagan (${checkData.time})</span>`
+                  : `<span class="badge badge-amber">⏳ Hali tasdiqlamadi</span>`}
+              </div>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="monitor-card">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                <div>
+                  <div style="font-weight:700; font-size:15px;">${t.name}</div>
+                  <div style="font-size:12px; color:var(--text-muted);">${t.subject} | ${t.phone}</div>
+                </div>
+                <span class="badge badge-gray">Bo'sh</span>
+              </div>
+              <div style="margin-top:12px; font-size:13px; color:var(--text); background:var(--input-bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
+                ${st.next
+                  ? `Navbatdagi darsi: <b>${st.next.start} - ${st.next.end}</b><br><span style="font-size:12px; color:var(--text-muted);">${st.next.subject} (${st.next.room})</span>`
+                  : `Bugun uchun boshqa darsi yo'q (Bugungi jami: ${st.todayCount} soat)`}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderAdminScheduleTable() {
+      const fDay = document.getElementById("adminFilterDay").value;
+      const tbody = document.getElementById("adminScheduleBody");
+      if (!tbody) return;
+      let list = fDay === "all" ? [...lessons] : lessons.filter(l => String(l.day) === fDay);
+      list.sort((a, b) => Number(a.day) - Number(b.day) || timeToMinutes(a.start) - timeToMinutes(b.start));
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:18px;">Jadvalda darslar mavjud emas</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(l => {
+        const t = teachers.find(x => x.login === l.teacherLogin);
+        return `
+          <tr>
+            <td><b>${DAYS_UZ[l.day]}</b></td>
+            <td style="font-family:monospace; font-weight:700; color:var(--primary);">${l.start} - ${l.end}</td>
+            <td>${t ? t.name : l.teacherLogin}</td>
+            <td><b>${l.subject}</b></td>
+            <td>${l.room}</td>
+            <td><button class="btn btn-danger btn-sm" onclick="deleteLesson(${l.id})">O'chirish</button></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderTeachersTable() {
+      const tbody = document.getElementById("teachersTableBody");
+      if (!tbody) return;
+      if (teachers.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:18px;">Hali o'qituvchilar ro'yxatdan o'tmagan</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = teachers.map(t => `
+        <tr>
+          <td><b>${t.name}</b></td>
+          <td>${t.subject}</td>
+          <td>${t.phone}</td>
+          <td><code>${t.login}</code></td>
+          <td><button class="btn btn-light btn-sm" onclick="resetTeacherPass('${t.login}')">Parolni yangilash</button></td>
+          <td><button class="btn btn-danger btn-sm" onclick="removeTeacher('${t.login}')">O'chirish</button></td>
+        </tr>
+      `).join("");
+    }
+
+    function exportTeachersExcel() {
+      let html = "<table><tr><th>F.I.Sh</th><th>Mutaxassisligi</th><th>Telefon</th><th>Login</th><th>Ro'yxatdan o'tgan sana</th></tr>";
+      teachers.forEach(t => {
+        html += `<tr><td>${t.name}</td><td>${t.subject}</td><td>${t.phone}</td><td>${t.login}</td><td>${t.createdAt || '-'}</td></tr>`;
+      });
+      html += "</table>";
+      const blob = new Blob([html], { type: "application/vnd.ms-excel" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "oqituvchilar_hisoboti.xls";
+      a.click();
+    }
+
+    function resetTeacherPass(login) {
+      const t = teachers.find(x => x.login === login);
+      if (!t) return;
+      const newP = prompt(`${t.name} uchun yangi parol kiriting:`, t.pass);
+      if (newP && newP.trim().length >= 4) {
+        t.pass = newP.trim();
+        syncToFirebase();
+        alert("Parol muvaffaqiyatli yangilandi!");
+      }
+    }
+
+    function removeTeacher(login) {
+      if (!confirm("Ushbu o'qituvchini va unga tegishli barcha dars jadvalini o'chirmoqchimisiz?")) return;
+      teachers = teachers.filter(t => t.login !== login);
+      lessons = lessons.filter(l => l.teacherLogin !== login);
+      syncToFirebase();
+    }
+
+    function loadSettingsInputs() {
+      document.getElementById("setSchoolName").value = config.schoolName;
+      document.getElementById("setAdminLogin").value = config.adminLogin;
+      document.getElementById("setAdminPass").value = config.adminPass;
+      document.getElementById("setAnnouncement").value = config.announcement || "";
+      document.getElementById("setBotToken").value = config.botToken || "";
+      document.getElementById("setChatId").value = config.chatId || "";
+    }
+
+    function handleSaveAdminSettings(e) {
+      e.preventDefault();
+      config.schoolName = document.getElementById("setSchoolName").value.trim();
+      config.adminLogin = document.getElementById("setAdminLogin").value.trim();
+      config.adminPass = document.getElementById("setAdminPass").value;
+      config.announcement = document.getElementById("setAnnouncement").value.trim();
+      config.botToken = document.getElementById("setBotToken").value.trim();
+      config.chatId = document.getElementById("setChatId").value.trim();
+      syncToFirebase();
+      showAlert("settingsAlert", "Tizim sozlamalari va Telegram ma'lumotlari saqlandi!", true);
+    }
+
+    function confirmLessonStart(lessonId) {
+      const topicInput = document.getElementById("lessonTopicInput");
+      const topic = topicInput ? topicInput.value.trim() : "";
+      const now = getNow();
+      
+      checkins[`${now.dateKey}_${lessonId}`] = {
+        time: now.hm,
+        topic: topic || "Mavzu kiritilmadi"
+      };
+      syncToFirebase();
+
+      // Telegramga xabar yuborish
+      const t = teachers.find(x => x.login === currentUser.login);
+      const l = lessons.find(x => x.id === lessonId);
+      if (t && l) {
+        const msg = `🔔 <b>Dars boshlandi!</b>\n\n👨‍🏫 O'qituvchi: <b>${t.name}</b>\n📚 Fan: <b>${l.subject}</b>\n📍 Xona: <b>${l.room}</b>\n📌 Mavzu: <b>${topic}</b>\n🕒 Vaqt: ${now.hm}`;
+        sendTelegramNotification(msg);
+      }
+
+      renderTeacherProfile();
+    }
+
+    function renderTeacherProfile() {
+      const t = teachers.find(x => x.login === currentUser.login);
+      if (!t) return;
+      const now = getNow();
+      const myLessons = lessons.filter(l => l.teacherLogin === t.login);
+
+      document.getElementById("profName").textContent = t.name;
+      document.getElementById("profMeta").textContent = `Fan: ${t.subject}  |  Tel: ${t.phone}  |  Login: ${t.login}`;
+      document.getElementById("profLessonCount").textContent = `${myLessons.length} soat`;
+
+      let confirmedCount = 0;
+      Object.keys(checkins).forEach(k => {
+        const lId = Number(k.split("_")[1]);
+        const lessonObj = lessons.find(x => x.id === lId);
+        if (lessonObj && lessonObj.teacherLogin === t.login) {
+          confirmedCount++;
+        }
+      });
+      document.getElementById("profConfirmedCount").textContent = `${confirmedCount} ta`;
+
+      const annBox = document.getElementById("teacherAnnouncementArea");
+      const annText = document.getElementById("teacherAnnouncementText");
+      if (config.announcement && config.announcement.trim() !== "") {
+        annText.textContent = config.announcement;
+        annBox.classList.remove("hidden");
+      } else {
+        annBox.classList.add("hidden");
+      }
+
+      const st = getTeacherLiveStatus(t.login);
+      const banner = document.getElementById("teacherLiveBanner");
+
+      if (st.active) {
+        const cKey = `${now.dateKey}_${st.active.id}`;
+        const confirmed = checkins[cKey];
+        
+        if (confirmed) {
+          banner.innerHTML = `
+            <div class="card" style="background:var(--success-bg); border-color:var(--success);">
+              <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:14px;">
+                <div>
+                  <span class="badge badge-green">● HOZIRGI DARSINGIZ KETMOQDA</span>
+                  <h3 style="font-size:21px; font-weight:800; margin-top:6px;">${st.active.subject}</h3>
+                  <p style="font-size:14px; opacity:0.95; margin-top:2px;">
+                    📍 Xona: <b>${st.active.room}</b> &nbsp;|&nbsp; 🕒 Vaqti: <b>${st.active.start} - ${st.active.end}</b> (Tugashiga ${st.active.remaining} daqiqa qoldi)
+                  </p>
+                </div>
+                <div style="background:var(--card-bg); border:1px solid var(--success); padding:12px 16px; border-radius:10px; font-weight:800; font-size:13px;">
+                  ✔ Dars tasdiqlangan (${confirmed.time})<br>
+                  <span style="font-size:12px; font-weight:normal; color:var(--success);">Mavzu: ${confirmed.topic}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          const existingInput = document.getElementById("lessonTopicInput");
+          const savedInputValue = existingInput ? existingInput.value : "";
+
+          banner.innerHTML = `
+            <div class="card" style="background:var(--success-bg); border-color:var(--success);">
+              <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:flex-start; gap:16px;">
+                <div style="flex:1; min-width:260px;">
+                  <span class="badge badge-green">● HOZIRGI DARSINGIZ KETMOQDA</span>
+                  <h3 style="font-size:21px; font-weight:800; margin-top:6px;">${st.active.subject}</h3>
+                  <p style="font-size:14px; opacity:0.95; margin-top:2px;">
+                    📍 Xona: <b>${st.active.room}</b> &nbsp;|&nbsp; 🕒 Vaqti: <b>${st.active.start} - ${st.active.end}</b> (Tugashiga ${st.active.remaining} daqiqa qoldi)
+                  </p>
+                </div>
+                <div style="width:100%; max-width:320px;">
+                  <div style="display:flex; flex-direction:column; gap:8px;">
+                    <label style="font-size:12px;">Bugungi dars mavzusi:</label>
+                    <input type="text" id="lessonTopicInput" value="${savedInputValue}" placeholder="Mavzuni kiriting...">
+                    <button class="btn btn-success" style="width:100%; font-weight:800;" onclick="confirmLessonStart(${st.active.id})">✋ Darsni boshladim (Tasdiqlash)</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+      } else {
+        banner.innerHTML = `
+          <div class="card" style="background:var(--input-bg); border-color:var(--border); margin-bottom:0;">
+            <div style="font-weight:800; font-size:15px; color:var(--primary);">🔔 Hozirgi daqiqada faol darsingiz yo'q</div>
+            <div style="font-size:13px; color:var(--text-muted); margin-top:3px;">
+              ${st.next
+                ? `Bugungi navbatdagi darsingiz soat <b>${st.next.start} - ${st.next.end}</b> da: <b>${st.next.subject}</b> (${st.next.room})`
+                : `Bugun (${now.dayName}) uchun rejalashtirilgan boshqa darslaringiz qolmadi.`}
+            </div>
+          </div>
+        `;
+      }
+
+      const dayFilter = document.getElementById("teacherDayFilter").value;
+      const list = dayFilter === "all" ? [...myLessons] : myLessons.filter(l => String(l.day) === dayFilter);
+      list.sort((a, b) => Number(a.day) - Number(b.day) || timeToMinutes(a.start) - timeToMinutes(b.start));
+
+      const grid = document.getElementById("teacherScheduleGrid");
+      if (!grid) return;
+      if (list.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:24px; color:var(--text-muted);">
+          Sizga hali dars jadvali biriktirilmagan yoki tanlangan kunda darsingiz yo'q.
+        </div>`;
+        return;
+      }
+
+      grid.innerHTML = list.map(l => {
+        const isToday = Number(l.day) === now.day;
+        const isNow = isToday && now.totalMin >= timeToMinutes(l.start) && now.totalMin < timeToMinutes(l.end);
+        return `
+          <div class="monitor-card ${isNow ? 'active-lesson' : ''}">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span class="badge ${isToday ? 'badge-green' : 'badge-gray'}">${DAYS_UZ[l.day]} ${isToday ? '(Bugun)' : ''}</span>
+                <span style="font-family:monospace; font-size:14px; font-weight:800; color:var(--primary);">${l.start} - ${l.end}</span>
+              </div>
+              <div style="font-size:16px; font-weight:800; margin-top:6px;">${l.subject}</div>
+              <div style="font-size:13px; color:var(--text-muted); margin-top:4px;">📍 Xona: <b>${l.room}</b></div>
+            </div>
+            ${isNow ? `<div style="margin-top:10px; font-size:12px; font-weight:800; color:var(--success);">● Ayni vaqtda shu dars o'tilmoqda</div>` : ''}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function tick() {
+      const now = getNow();
+      const clockEl = document.getElementById("liveClock");
+      const dayEl = document.getElementById("liveDay");
+      if (clockEl) clockEl.textContent = now.hms;
+      if (dayEl) dayEl.textContent = now.dayName;
+
+      if (currentUser?.role === "admin") {
+        renderAdminMonitor();
+      } else if (currentUser?.role === "teacher") {
+        const activeInput = document.getElementById("lessonTopicInput");
+        if (!activeInput || document.activeElement !== activeInput) {
+          renderTeacherProfile();
+        }
+      }
+    }
+
+    initTheme();
+    setInterval(tick, 1000);
+    tick();
+  </script>
+</body>
+</html>
